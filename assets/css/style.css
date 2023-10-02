@@ -1,0 +1,47 @@
+:root{
+  --dark-color: #111111;
+  --dark-grad: #331133;
+  --light-color: #AAAAAA;
+  --hover-color: #CCDDCC;
+  --new-color: #AA2288;
+  --old-color: #BBAABB;
+}
+
+body{
+  background-color: var(--dark-grad);
+
+}
+
+header{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items:center;
+  font-size: 5rem;
+  color: var(--light-color);
+  margin: 1rem;
+}
+
+section{
+  display:flex;
+  font-size: 1.5rem;
+  color: var(--old-color);
+  justify-content: center;
+  margin: 1rem;
+
+}
+
+ol{
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+button{
+  background:color var(--hover-color);
+  color: var(--old-color);
+  outline:2px solid var(--new-color);
+  width: 150px;
+  margin: .4rem;
+}
