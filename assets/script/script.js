@@ -19,6 +19,7 @@ var userClick = "";
 var timeRemove = 0;
 var msgClear = 0;
 var initials = "";
+var highScoreList = [];
 
 
 
@@ -45,7 +46,7 @@ var timerDisp = document.createElement("section");
 
 
 
-
+//question array for displaying the question and 4 choices and having an answer to compare correct choice to the value of the button pressed
 var questionArr = [
   { "qKey": 1,
     "question": "To throw someone out the window",
@@ -127,18 +128,14 @@ but3.textContent = "Button 3";
 but4.textContent = "Button 4";
 resultDisp.textContent = "";
 timerDisp.textContent = "";
-
-
-
 //Hide Unused Buttons until quiz begins
 but3.style.display = 'none';
 but4.style.display = 'none';
-
-
-
 optionSection.style.justifyContent = 'center';
+quizLive = false;
 }
 
+//creating the page
 body.appendChild(headerTitle);
 body.appendChild(quizZone);
 quizZone.appendChild(explanation);
@@ -151,7 +148,7 @@ body.appendChild(resultDisp);
 body.appendChild(timerDisp);
 
 var button = document.querySelectorAll("button");
-
+//Setting up the first set of questions and making the 3rd and 4th button appear again while starting the timer
 function startQuiz(){
   updateTimer();
   but3.style.display = 'block';
@@ -168,7 +165,7 @@ function startQuiz(){
   but4.textContent = questionArr[questionCount].choice4;
 
 }
-
+//Evaluating the answer and if time needs to be taken away or if the game is over
 function processAnswer(){
   if (userChoice === questionArr[questionCount].answer){
     resultDisp.textContent = "Correct";
@@ -189,12 +186,42 @@ function processAnswer(){
     but4.textContent = questionArr[questionCount].choice4;
 
 }
-
+//when a high score is added it pulls old high scores from local storage, cuts name to 3 charas, 
+//and then adds new high score to the list before resaving it to local storage
 function addHighScore(str,int){
-  console.log(initials)
+  var oldHighScoreList = JSON.parse(localStorage.getItem("highScoreList"));
+  var newScore = [{int: int, str: str.substr(0,3)}]
+
+  if (oldHighScoreList !== null){
+  highScoreList = oldHighScoreList;
+    highScoreList = [...highScoreList, ...newScore];
+  }
+  else{
+    highScoreList = newScore
+  }
+  console.log (highScoreList)
+  localStorage.setItem("highScoreList", JSON.stringify(highScoreList));  
 }
-
-
+//Tries to pull highscore from local storage, presents in a message and gives option to clear
+function displayHighScore(){
+  var highScoreList = JSON.parse(localStorage.getItem("highScoreList"));
+  if (highScoreList !== null){
+    var dispHighScore = `Name | Score 
+  `;
+    for (i = 0; i < highScoreList.length; i++)
+    {
+      dispHighScore = dispHighScore + `${highScoreList[i].str}  | ${highScoreList[i].int}  
+  `;
+    }
+    dispHighScore = dispHighScore + `Would you like to clear the scores?`;
+    var clearHigh = confirm(dispHighScore);
+    if (clearHigh) localStorage.setItem("highScoreList", null);
+  
+  }
+  else{
+    alert("No saved high scores, play the game to get one!");
+  }
+}
 //Timer
 function updateTimer() {
   var timeLeft = 59;
@@ -212,6 +239,7 @@ function updateTimer() {
     else{
      resultDisp.textContent = "";
     }
+    // end game and calc high score when finished
     if (questionCount > 7){
       clearInterval(timeInterval);
       initials = prompt("Your score is " + timeLeft + "! What are you initials?(3 Char Max)");
@@ -228,13 +256,15 @@ function updateTimer() {
     } else {
       timerDisp.textContent = '';
       clearInterval(timeInterval);
-
+      alert("You lost, Try again to get your name on the high score board!");
+      //I could put in a addHighScore(initials, timeleft); here as well and let the user initial a score of 0 but I chose not to. 
+      doReset();
 
 
     }
   }, 1000);
 }
-
+// Check for clicking in button area and respond based on button pressed
 quizZone.addEventListener("click", (event) => {
   userClick = event.target.id
 
@@ -244,7 +274,7 @@ quizZone.addEventListener("click", (event) => {
     userChoice = "choice1";
     processAnswer();
    } 
-  else if ((!quizLive) && (userClick === "but2"))console.log ("test");
+  else if ((!quizLive) && (userClick === "but2"))displayHighScore();
   else if (userClick === "but2" && (quizLive)){
     userChoice = "choice2";
     processAnswer();
@@ -260,5 +290,5 @@ quizZone.addEventListener("click", (event) => {
 
   
 });
-
+//Set the page
 doReset();
