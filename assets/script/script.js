@@ -174,7 +174,12 @@ function processAnswer(){
     timeRemove = timeRemove + 10;
     resultDisp.textContent = "WRONG..."
   }
-  msgClear = 2;
+  msgClear = 10; //Message will clear after 1.0 second while disabling buttons for .1 second to prevent spamming
+  but1.disabled = true;
+  but2.disabled = true;
+  but3.disabled = true;
+  but4.disabled = true;
+  
     questionCount++
     if (questionCount > 7){
       return;
@@ -224,45 +229,58 @@ function displayHighScore(){
 }
 //Timer
 function updateTimer() {
-  var timeLeft = 59;
+  var timeLeft = 590;
   var timeInterval = setInterval(function () {
     // removes time on wrong answer
-    if (timeRemove > 0){
-      timeLeft = timeLeft - timeRemove;
-      timeRemove = 0;
-    }
 
-    //Clears  answer message after 2 seconds
+
+    //Clears  answer message after 1 second
     if (msgClear > 0){
       msgClear--;
     }
     else{
      resultDisp.textContent = "";
     }
-    // end game and calc high score when finished
-    if (questionCount > 7){
+    // end game and calc high score when finished, timeleft to not let players go negative, time remove to make sure clock updates before score is given.
+    if (questionCount > 7 && timeLeft > 0 && timeRemove < 1){
       clearInterval(timeInterval);
-      initials = prompt("Your score is " + timeLeft + "! What are you initials?(3 Char Max)");
+      initials = prompt("Your score is " + Math.floor(timeLeft/10) + "! What are you initials?(3 Char Max)");
+      console.log (initials);
+      //If user hits cancel turns initials into MPT for Empty
+      if (initials === null) initials = "MPT";
       doReset();
-      addHighScore(initials, timeLeft);
+      addHighScore(initials, Math.floor(timeLeft/10));
       timeLeft = 0
     }
+    if (timeRemove > 0){
+      timeLeft = timeLeft - timeRemove*10;
+      timeRemove = 0;
+      if (timeLeft < 0) timeLeft = 0;
+    }
+    //This is to prevent button spamming before timer updates are calculated
+    but1.disabled = false;
+    but2.disabled = false;
+    but3.disabled = false;
+    but4.disabled = false;
+
        if (timeLeft > 1) {
-      timerDisp.textContent = timeLeft;
+      timerDisp.textContent = timeLeft/10;
       timeLeft--;
     } else if (timeLeft === 1) {
-      timerDisp.textContent = timeLeft;
+      timerDisp.textContent = Math.floor(timeLeft/10);
       timeLeft--;
     } else {
       timerDisp.textContent = '';
       clearInterval(timeInterval);
+      //Only runs a reset if a reset is needed
+      if (quizLive){
       alert("You lost, Try again to get your name on the high score board!");
       //I could put in a addHighScore(initials, timeleft); here as well and let the user initial a score of 0 but I chose not to. 
       doReset();
-
+      }
 
     }
-  }, 1000);
+  }, 100);
 }
 // Check for clicking in button area and respond based on button pressed
 quizZone.addEventListener("click", (event) => {
