@@ -118,7 +118,7 @@ var questionArr = [
 // Starting state of webpage context
 function doReset(){
 headerTitle.textContent = "Obscure Word Quiz";
-explanation.textContent = `You have 90 seconds to finish as many questions as possible. 
+explanation.textContent = `You have 60 seconds to finish as many questions as possible. 
 The question will give you a definition and 4 choice answers.
 Select an answer to advance to the next question. 
 Wrong answers will cost you 10 seconds. Good luck!`
@@ -204,7 +204,6 @@ function addHighScore(str,int){
   else{
     highScoreList = newScore
   }
-  console.log (highScoreList)
   localStorage.setItem("highScoreList", JSON.stringify(highScoreList));  
 }
 //Tries to pull highscore from local storage, presents in a message and gives option to clear
@@ -221,7 +220,6 @@ function displayHighScore(){
     dispHighScore = dispHighScore + `Would you like to clear the scores?`;
     var clearHigh = confirm(dispHighScore);
     if (clearHigh) localStorage.setItem("highScoreList", null);
-  
   }
   else{
     alert("No saved high scores, play the game to get one!");
@@ -245,7 +243,6 @@ function updateTimer() {
     if (questionCount > 7 && timeLeft > 0 && timeRemove < 1){
       clearInterval(timeInterval);
       initials = prompt("Your score is " + Math.floor(timeLeft/10) + "! What are you initials?(3 Char Max)");
-      console.log (initials);
       //If user hits cancel turns initials into MPT for Empty
       if (initials === null) initials = "MPT";
       doReset();
@@ -286,7 +283,6 @@ function updateTimer() {
 quizZone.addEventListener("click", (event) => {
   userClick = event.target.id
 
-  console.log ("click")
   if ((!quizLive) && (userClick === "but1"))startQuiz();
   else if (userClick === "but1" && (quizLive)){
     userChoice = "choice1";
